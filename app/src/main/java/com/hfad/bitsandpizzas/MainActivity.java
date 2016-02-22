@@ -1,18 +1,20 @@
 package com.hfad.bitsandpizzas;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
-import android.widget.AdapterView;
-import android.view.View;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 
 public class MainActivity extends Activity {
 
@@ -28,7 +30,7 @@ public class MainActivity extends Activity {
     private ListView drawerList;
     private DrawerLayout drawerLayout;
     private int currentPosition = 0;
-
+    private ActionBarDrawerToggle drawerToggle;
 
 
     private void selectItem(int position){
@@ -79,7 +81,39 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null){
             selectItem(0);
         }
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                R.string.open_drawer, R.string.close_drawer){
+            //called when a drawer has settled in a completely closed state
+            public void onDrawerOpened(View drawerView){
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+            }
+        };
+        drawerLayout.setDrawerListener(drawerToggle);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
 
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState){
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    //Called whenever we call invalidateOptionMenu()
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        // If the drawer is open, hide action items related to the constant view
+        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
+        menu.findItem(R.id.action_share).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -101,6 +135,9 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
+        if (drawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
         switch (item.getItemId()){
             case R.id.action_create_order:
                 //Code to run when the Create Order item is clicked
