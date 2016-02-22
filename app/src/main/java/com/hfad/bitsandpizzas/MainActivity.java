@@ -5,16 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.ShareActionProvider;
 
 public class MainActivity extends Activity {
 
     private ShareActionProvider shareActionProvider;
+    private String[] titles;
+    private ListView drawerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        titles = getResources().getStringArray(R.array.titles);
+        drawerList = (ListView)findViewById(R.id.drawer);
+        drawerList.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, titles));
+
     }
 
     @Override
