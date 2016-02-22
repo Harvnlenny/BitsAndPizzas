@@ -16,19 +16,23 @@ import android.app.FragmentTransaction;
 
 public class MainActivity extends Activity {
 
-    private ShareActionProvider shareActionProvider;
-    private String[] titles;
-    private ListView drawerList;
-    private DrawerLayout drawerLayout;
-
-    private class DrawerItemClickListener implements ListView.OnItemClickListener{
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
-        public void onItemClick(AdapterView<?>) parent, View view, int position, long id){
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id){
             selectItem(position);
         }
     };
 
+    private ShareActionProvider shareActionProvider;
+    private String[] titles;
+    private ListView drawerList;
+    private DrawerLayout drawerLayout;
+    private int currentPosition = 0;
+
+
+
     private void selectItem(int position){
+        currentPosition = position;
         Fragment fragment;
         switch (position){
             case 1:
@@ -40,15 +44,15 @@ public class MainActivity extends Activity {
             case 3:
                 fragment = new StoresFragment();
                 break;
-            case 4:
+            default:
                 fragment = new TopFragment();
         }
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.content_frame, fragment);
+        ft.replace(R.id.content_frame, fragment, "visible_fragment");
         ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
-        setActionBar(position);
+        setActionBarTitle(position);
         drawerLayout.closeDrawer(drawerList);
     }
 
